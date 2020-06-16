@@ -1,7 +1,8 @@
-console.log("hello")
+console.log("hello world")
+var server_url = "http://education-env.eba-zpu6tvez.us-east-2.elasticbeanstalk.com"
 
 var years;
-d3.json("http://127.0.0.1:5000/api/years").then(years => {
+d3.json(server_url + "/api/years").then(years => {
     console.log(years);
     d3.select("#years")
         .append("select")
@@ -12,32 +13,28 @@ d3.json("http://127.0.0.1:5000/api/years").then(years => {
         .append("option")
         .attr("value", d => d)
         .text(d => d);
-
-
 }
 );
-var slice = 12;
+var slice = 10;
+
 var newYear = 2008;
 function yearchanged() {
     newYear = d3.select(this).property('value');
     console.log(newYear);
-    d3.json(`http://127.0.0.1:5000/api/${newYear}`).then(props => {
-        properties = props.slice(0,slice);
-        updateBarChart(newYear, "literacy_rate");
+    d3.json(server_url + `/api/${newYear}`).then(props => {
+        properties = props;
+        updateBarChart(newYear, newProperty);
     })
-
 }
 
-
-
 var impacts;
-d3.json("http://127.0.0.1:5000/api/properties").then(impacts => {
+d3.json(server_url + "/api/properties").then(impacts => {
     console.log(impacts);
     d3.select("#impacts")
         .append("select")
         .attr("id", "ImpactSelector").on("change", propertychanged)
         .selectAll("option")
-        .data(impacts)
+        .data(impacts.slice(1))  // Skip over longitude
         .enter()
         .append("option")
         .attr("value", d => d)
@@ -45,29 +42,28 @@ d3.json("http://127.0.0.1:5000/api/properties").then(impacts => {
 }
 );
 
+var newProperty = "education_expenditures";
 function propertychanged() {
-    var newProperty = d3.select(this).property('value');
+    newProperty = d3.select(this).property('value');
     console.log(newProperty);
     updateBarChart(newYear, newProperty);
-
 }
 
-
 var properties;
-d3.json("http://127.0.0.1:5000/api/2008").then(props => {
-    properties = props.slice(0,slice);
-    updateBarChart(2008, "education_expenditures");
+d3.json(server_url + "/api/2008").then(props => {
+    properties = props;
+    updateBarChart(2008, newProperty);
 })
-
-
-
 
 // Update the horizontal bar chart
 function updateBarChart(year, property) {
     // Set a chart title, appropriate for one or more sample bacteria
     let chart_title = `${property} in ${year}`;
-    let country_list = properties.map(p => p.country);
-    let value_list = properties.map(p => p[property]);
+    let local_properties = properties;
+    local_properties.sort((a, b) => (a[property] < b[property]) ? 1 : -1);
+    top10_properties = local_properties.slice(0,slice).reverse();
+    let country_list = top10_properties.map(p => p.country);
+    let value_list = top10_properties.map(p => p[property]);
 
     // Plot the counts of the bacteria samples
     var trace1 = {
@@ -87,4 +83,3 @@ function updateBarChart(year, property) {
     var data = [trace1];
     Plotly.newPlot("bar", data, layout)
 }
-

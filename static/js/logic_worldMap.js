@@ -3,6 +3,8 @@
 //###############################
 // Using in resetStyle method
 var geojson;
+// Web Service API Server URL
+var server_url = "http://education-env.eba-zpu6tvez.us-east-2.elasticbeanstalk.com"
 // Showing pipups on country hover inside a custom control
 var info = L.control();
 
@@ -158,7 +160,7 @@ d3.json('static/data/updated_countries.geojson').then(countryData => {
 });
 
 // Facters Markers
-var url = "http://localhost:5000/api/worldMapData";
+var url = server_url + "/api/worldMapData";
 d3.json(url).then(data => {
 
     // console.log("api data : ", data);
@@ -237,10 +239,10 @@ d3.json(url).then(data => {
 
 
     overlays = {
-        "Literacy": literacyLayer,
-        "Unemployment": unemploymentLayer,
-        "Purchasing Power Parity": pppLayer,
-        "Distribution of family Income": giniIndexLayer
+        "Literacy (age 15 and over can read and write)": literacyLayer,
+        "Unemployment Rate": unemploymentLayer,
+        "Purchasing Power Parity (PPP)": pppLayer,
+        "Distribution of family Income (Gini Index)": giniIndexLayer
 
     };
     myMap = L.map("map", {
@@ -278,36 +280,21 @@ d3.json(url).then(data => {
             labels = [];
 
         // loop through our density intervals and generate a label with a colored square for each interval
+        div.innerHTML='World Education Expenditure<br>'
+        div.innerHTML+=rates[0]+'&nbsp;'.repeat(48)+rates[7]+'+'+'<br>'
         for (var i = 0; i < rates.length; i++) {
-            div.innerHTML +=
-                '<i style="background:' + getColor(rates[i] + 1) + '"></i> ' +
-                rates[i] + (rates[i + 1] ? '&ndash;' + rates[i + 1] + '<br>' : '+');
+            // div.innerHTML='Education Expesnes';
+            // div.innerHTML +=
+            //     '<i style="background:' + getColor(rates[i] + 1) + '"></i> ' +
+            //     rates[i] + (rates[i + 1] ? '&ndash;' + rates[i + 1] + '<br>' : '+');
+            div.innerHTML+=
+            '<i style="background:' + getColor(rates[i] + 1) + '"></i> ';
         }
 
         return div;
     };
 
     legend.addTo(myMap);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 });
 
 
