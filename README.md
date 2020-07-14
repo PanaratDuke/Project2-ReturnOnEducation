@@ -6,7 +6,7 @@ Team Member - Norman Gwinn, Panarat Duke, Gini Arimbi, Sarah Sutar
 Data Analytics Bootcamp - Rice University
 
 
-https://Project2Returnoneducation-env.eba-pmc6kpkn.us-east-2.elasticbeanstalk.com 
+Web Link https://Project2Returnoneducation-env.eba-pmc6kpkn.us-east-2.elasticbeanstalk.com/
 
 
 
